@@ -64,9 +64,9 @@ coverage.xml
 !examples/*.csv
 !seeds/*.csv
 # data/raw ska aldrig in
-data/processed/
-data/tmp/
-data/raw/
+!data/processed/
+!data/tmp/
+!data/raw/
 
 # men tillåt små fixtures/exempel
 !data/fixtures/**/*.json
