@@ -2,7 +2,12 @@ import pandas as pd
 from pathlib import Path
 # Kod: Engelska
 # Kommentarer: Svenska
-
+"""
+Lab 1: Data Ingestion & Transformation
+Student: Johnny Hyytiäinen
+Course: Dataplatform Development
+Files: I chose to separate my files with expensive items and my deviant items in two separate files for readability
+"""
 # Config
 FILEPATH = Path("data/raw/products.csv")
 OUTPUT_DIR = Path("data/clean")
@@ -96,7 +101,8 @@ def run_pipeline():
         'median_price': df_valid['price_numeric'].median(),
         'total_products': len(df_valid),
         'total_rejected': len(df_rejected),
-        'missing_currency_count': df_valid['flag_missing_currency'].sum()
+        'missing_currency_count': df_valid['flag_missing_currency'].sum(),
+        'missing_price_count': df['flag_missing_price'].sum()
     }
     pd.DataFrame([summary]).to_csv(OUTPUT_DIR / "analytics_summary.csv", index=False)
     print("Saved analytics_summary.csv")
@@ -111,6 +117,7 @@ def run_pipeline():
     print(f"   - Luxury items (>{THRESHOLD_LUXURY}): {df_valid['flag_luxury'].sum()}")
     print(f"   - Free items: {df_valid['flag_is_free'].sum()}")
     print(f"   - Missing currency: {summary['missing_currency_count']}")
+    print(f"   - Missing prices: {summary['missing_price_count']}")
     print("\n Pipeline complete!")
 
 
