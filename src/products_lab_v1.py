@@ -1,57 +1,118 @@
 import pandas as pd
 from pathlib import Path
+# Kod: Engelska
+# Kommentarer: Svenska
 
 # Config
-filepath = Path("data/raw/products.csv")
-THRESHOLD = 15000
+FILEPATH = Path("data/raw/products.csv")
+OUTPUT_DIR = Path("data/clean")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+THRESHOLD_LUXURY = 5000
 
-# 1. Read
-# Eftersom att CSV fil innehåller ';' som separator och inte ',' använder jag character/regex pattern för att se ';' som delimiter.
-df = pd.read_csv(filepath, sep=';')
-print(f"{df.head(20)} \n\n")
-
-# 2. Transform (clean, validate)
-# Konvertera till numeric först för att undvika issues med strängar och jämförelser.
-df['price'] = pd.to_numeric(df['price'], errors='coerce')
-# Tar bort rader där priser ger NaN värde(inte existerar) med 'dropna' method och 'subset' som parameter
-df_clean = df.dropna(subset=['price'])
-df_clean = df_clean[df_clean['price'] > 0]  # Remove invalid
-print(f"{df_clean.head(20)} \n\n")
-
-# 3. Flagga problem
-# Se över och hitta saknade värden med isna() method
-df['flag_missing_currency'] = df['currency'].isna()
-# Se över och flagga för "luxury items", konstanten i min config avgör var den gränsen går.
-df['flag_luxury_items'] = df['price'] > THRESHOLD
-df['flag_free_items'] = df['price'] == 0
-df_missing_curr = df['flag_missing_currency']
-df_luxury_items = df['flag_luxury_items']
-df_free_items = df['flag_free_items']
-
-# Prints för att dubbelkolla all data
-print(f"{df_missing_curr.describe()}\n\n")
-print(f"{df_free_items.describe()}\n\n")
-print(f"{df_luxury_items.describe()}\n\n")
+# Pris analyser
+def create_price_analysis(df_valid, output_dir):
+    """BONUS: Generate price analysis with top 10 expensive and deviant products."""
+    # Top 10 dyraste
+    top10_expensive = df_valid.nlargest(10, 'price_numeric')[['name', 'price_numeric', 'currency']].copy()
+    top10_expensive['category'] = 'expensive'
+    
+    # Top 10 mest avvikelser (använder mig av z-score)
+    mean_price = df_valid['price_numeric'].mean()
+    std_price = df_valid['price_numeric'].std()
+    df_valid_copy = df_valid.copy()
+    df_valid_copy['price_deviation'] = abs((df_valid_copy['price_numeric'] - mean_price) / std_price)
+    top10_deviant = df_valid_copy.nlargest(10, 'price_deviation')[['name', 'price_numeric', 'price_deviation']].copy()
+    top10_deviant['category'] = 'deviant'
+    
+    # Spara
+    top10_expensive.to_csv(output_dir / "price_analysis_expensive.csv", index=False)
+    top10_deviant.to_csv(output_dir / "price_analysis_deviant.csv", index=False)
+    print("   - Saved price_analysis files (BONUS)")
 
 
-# 4. Avvisa alla omöjlig data
-df_rejected = df[df['price'] < 0]
+def run_pipeline():
+    print("Starting ETL Pipeline")
+    
+    # Sanity check för att se om filen existerar
+    if not FILEPATH.exists():
+        print(f"File not found: {FILEPATH}")
+        return
+    
+    # EXTRACT (E)
+    df = pd.read_csv(FILEPATH, sep=';', dtype=str)
+    print(f"Loaded {len(df)} rows")
+
+    # TRANSFORM (T)
+    # Tvätta kolumn namn
+    df.columns = df.columns.str.strip().str.lower()
+    
+    # Tvätta textfält
+    text_cols = ['name', 'currency', 'price', 'created_at']
+    for col in text_cols:
+        if col in df.columns:
+            df[col] = df[col].str.strip()
+    
+    # Standardisera/Normalisera text. Namn som title och currency i caps
+    if 'name' in df.columns:
+        df['name'] = df['name'].str.title()
+    if 'currency' in df.columns:
+        df['currency'] = df['currency'].str.upper()
+    
+    # Fixar till format på datum
+    df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
+    df['created_at_str'] = df['created_at'].dt.strftime('%Y-%m-%d')
+    
+    # Tvätta priserna (hanterar "free", "not_available")
+    df['price_clean'] = df['price'].str.lower()
+    df['price_clean'] = df['price_clean'].replace({
+        'free': '0', 
+        'not_available': None, 
+        '': None
+    })
+    df['price_numeric'] = pd.to_numeric(df['price_clean'], errors='coerce')
+    
+    # FLAGGA för problem
+    df['flag_missing_price'] = df['price_numeric'].isna()
+    df['flag_negative_price'] = df['price_numeric'] < 0
+    df['flag_is_free'] = df['price_numeric'] == 0
+    df['flag_luxury'] = df['price_numeric'] > THRESHOLD_LUXURY
+    df['flag_missing_currency'] = df['currency'].isna() | (df['currency'] == '')  # Added!
+    
+    # REJECT'A omöjliga värden
+    rejection_mask = df['flag_missing_price'] | df['flag_negative_price']
+    df_rejected = df[rejection_mask].copy()
+    df_valid = df[~rejection_mask].copy()
+    
+    print(f"Valid rows: {len(df_valid)}")
+    print(f"Rejected rows: {len(df_rejected)}")
+    
+    # LOAD (L) - Sparar outputs
+    df_valid.to_csv(OUTPUT_DIR / "cleaned_products.csv", index=False)
+    df_rejected.to_csv(OUTPUT_DIR / "rejected_products.csv", index=False)
+    
+    # Analytics sammanfattning
+    summary = {
+        'avg_price': df_valid['price_numeric'].mean(),
+        'median_price': df_valid['price_numeric'].median(),
+        'total_products': len(df_valid),
+        'total_rejected': len(df_rejected),
+        'missing_currency_count': df_valid['flag_missing_currency'].sum()
+    }
+    pd.DataFrame([summary]).to_csv(OUTPUT_DIR / "analytics_summary.csv", index=False)
+    print("Saved analytics_summary.csv")
+    
+    # BONUS: Pris analys
+    create_price_analysis(df_valid, OUTPUT_DIR)
+    
+    # Sammanfattning i terminalen
+    print(f"\n -  Summary:")
+    print(f"   - Avg price: {summary['avg_price']:.2f}")
+    print(f"   - Median price: {summary['median_price']:.2f}")
+    print(f"   - Luxury items (>{THRESHOLD_LUXURY}): {df_valid['flag_luxury'].sum()}")
+    print(f"   - Free items: {df_valid['flag_is_free'].sum()}")
+    print(f"   - Missing currency: {summary['missing_currency_count']}")
+    print("\n Pipeline complete!")
 
 
-# 5. Generera sammanfattning
-analytics = {
-    'avg_price': df['price'].mean(),
-    'median_price': df['price'].median(),
-    'total_products': len(df),
-    'missing_price': df['price'].isna().sum()
-}
-
-# 6. Spara i rätt folder
-output_dir = Path("data/clean")
-output_dir.mkdir(parents=True, exist_ok=True)
-
-pd.DataFrame([analytics]).to_csv(output_dir / "analytics_summary.csv", index=False)
-
-# Bonus
-top10_expensive = df.nlargest(10, 'price')
-top10_expensive.to_csv(output_dir / "price_analysis.csv", index=False)
+if __name__ == "__main__":
+    run_pipeline()
