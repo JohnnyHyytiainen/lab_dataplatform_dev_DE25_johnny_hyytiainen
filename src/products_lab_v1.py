@@ -13,7 +13,6 @@ FILEPATH = Path("data/raw/products.csv")
 OUTPUT_DIR = Path("data/clean")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 THRESHOLD_LUXURY = 5000
-
 # Pris analyser
 def create_price_analysis(df_valid, output_dir):
     """BONUS: Generate price analysis with top 10 expensive and deviant products."""
@@ -34,10 +33,8 @@ def create_price_analysis(df_valid, output_dir):
     top10_deviant.to_csv(output_dir / "price_analysis_deviant.csv", index=False)
     print("   - Saved price_analysis files (BONUS)")
 
-
 def run_pipeline():
     print("Starting ETL Pipeline")
-    
     # Sanity check för att se om filen existerar
     if not FILEPATH.exists():
         print(f"File not found: {FILEPATH}")
@@ -50,13 +47,11 @@ def run_pipeline():
     # TRANSFORM (T)
     # Tvätta kolumn namn
     df.columns = df.columns.str.strip().str.lower()
-    
     # Tvätta textfält
     text_cols = ['name', 'currency', 'price', 'created_at']
     for col in text_cols:
         if col in df.columns:
             df[col] = df[col].str.strip()
-    
     # Standardisera/Normalisera text. Namn som title och currency i caps
     if 'name' in df.columns:
         df['name'] = df['name'].str.title()
@@ -110,7 +105,6 @@ def run_pipeline():
     # BONUS: Pris analys
     create_price_analysis(df_valid, OUTPUT_DIR)
     
-    # Sammanfattning i terminalen
     print(f"\n -  Summary:")
     print(f"   - Avg price: {summary['avg_price']:.2f}")
     print(f"   - Median price: {summary['median_price']:.2f}")
@@ -119,7 +113,6 @@ def run_pipeline():
     print(f"   - Missing currency: {summary['missing_currency_count']}")
     print(f"   - Missing prices: {summary['missing_price_count']}")
     print("\n Pipeline complete!")
-
 
 if __name__ == "__main__":
     run_pipeline()
