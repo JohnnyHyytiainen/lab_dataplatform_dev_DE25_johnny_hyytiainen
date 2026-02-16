@@ -94,9 +94,14 @@ def run_pipeline_v2():
     df['flag_is_free'] = df['price_numeric'] == 0
     df['flag_luxury'] = df['price_numeric'] > THRESHOLD_LUXURY
     df['flag_missing_currency'] = df['currency'].isna() | (df['currency'] == '')
+    df['flag_missing_id'] = df['id'].isna() | (df['id'] == '')
 
     # Filtrering
-    rejection_mask = df['flag_missing_price'] | df['flag_negative_price']
+    rejection_mask = (
+    df['flag_missing_price'] | 
+    df['flag_negative_price'] | 
+    df['flag_missing_id']  # <-- Ny regel!
+)
     df_rejected = df[rejection_mask].copy()
     df_valid = df[~rejection_mask].copy()
 
@@ -136,7 +141,7 @@ def run_pipeline_v2():
     # === BONUS: PRISANALYS ===
     # Anropar pris analys funktionen
     create_price_analysis(df_valid, OUTPUT_DIR)
-    
+
     print("\n Pipeline v2 Complete! Check data/clean_v2/ and your PgAdmin4.")
     
 if __name__ == "__main__":
