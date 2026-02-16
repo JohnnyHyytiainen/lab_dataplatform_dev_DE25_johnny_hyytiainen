@@ -74,6 +74,8 @@ def run_pipeline_v2():
         df['name'] = df['name'].str.title()
     if 'currency' in df.columns:
         df['currency'] = df['currency'].str.upper()
+    if 'created_at' in df.columns:
+        df['created_at'] = df['created_at'].str.strip().str.replace("/", "-", regex=False)
 
     # Fixa till datum format
     # Spara som string för CSV, men behåller datetime objekt för SQL
