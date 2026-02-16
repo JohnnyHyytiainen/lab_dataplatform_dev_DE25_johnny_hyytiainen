@@ -1,8 +1,8 @@
 id,name,price,currency,created_at,price_clean,price_numeric,ingested_at,flag_missing_price,flag_negative_price,flag_is_free,flag_luxury,flag_missing_currency,flag_missing_id
-,Jacket,-200,SEK,,-200,-200.0,2026-02-16 13:25:34.089854,False,True,False,False,False,True
-SKU-1005,,,,,,,2026-02-16 13:25:34.089854,True,False,False,False,True,False
-SKU-1006,Designer Coat,,SEK,2024-05-01,,,2026-02-16 13:25:34.089854,True,False,False,False,False,False
-,Hat,free,SEK,,0,0.0,2026-02-16 13:25:34.089854,False,False,True,False,False,True
-SKU-1015,Hoodie,-50,SEK,2024-04-15,-50,-50.0,2026-02-16 13:25:34.089854,False,True,False,False,False,False
-SKU-1043,Cardigan,,SEK,2024-11-15,,,2026-02-16 13:25:34.089854,True,False,False,False,False,False
-SKU-1052,Coat,not_available,SEK,2025-01-10,,,2026-02-16 13:25:34.089854,True,False,False,False,False,False
+,Jacket,-200,SEK,,-200,-200.0,2026-02-16 13:55:43.282976,False,True,False,False,False,True
+SKU-1005,,,,,,,2026-02-16 13:55:43.282976,True,False,False,False,True,False
+SKU-1006,Designer Coat,,SEK,2024-05-01,,,2026-02-16 13:55:43.282976,True,False,False,False,False,False
+,Hat,free,SEK,,0,0.0,2026-02-16 13:55:43.282976,False,False,True,False,False,True
+SKU-1015,Hoodie,-50,SEK,2024-04-15,-50,-50.0,2026-02-16 13:55:43.282976,False,True,False,False,False,False
+SKU-1043,Cardigan,,SEK,2024-11-15,,,2026-02-16 13:55:43.282976,True,False,False,False,False,False
+SKU-1052,Coat,not_available,SEK,2025-01-10,,,2026-02-16 13:55:43.282976,True,False,False,False,False,False
