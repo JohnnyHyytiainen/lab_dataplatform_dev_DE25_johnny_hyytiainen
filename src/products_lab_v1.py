@@ -29,8 +29,8 @@ def create_price_analysis(df_valid, output_dir):
     top10_deviant['category'] = 'deviant'
     
     # Spara
-    top10_expensive.to_csv(output_dir / "price_analysis_expensive.csv", index=False)
-    top10_deviant.to_csv(output_dir / "price_analysis_deviant.csv", index=False)
+    top10_expensive.to_csv(output_dir / "price_analysis_expensive_v1.csv", index=False)
+    top10_deviant.to_csv(output_dir / "price_analysis_deviant_v1.csv", index=False)
     print("   - Saved price_analysis files (BONUS)")
 
 def run_pipeline():
@@ -87,8 +87,8 @@ def run_pipeline():
     print(f"Rejected rows: {len(df_rejected)}")
     
     # LOAD (L) - Sparar outputs
-    df_valid.to_csv(OUTPUT_DIR / "cleaned_products.csv", index=False)
-    df_rejected.to_csv(OUTPUT_DIR / "rejected_products.csv", index=False)
+    df_valid.to_csv(OUTPUT_DIR / "cleaned_products_v1.csv", index=False)
+    df_rejected.to_csv(OUTPUT_DIR / "rejected_products_v1.csv", index=False)
     
     # Analytics sammanfattning
     summary = {
@@ -99,8 +99,8 @@ def run_pipeline():
         'missing_currency_count': df_valid['flag_missing_currency'].sum(),
         'missing_price_count': df['flag_missing_price'].sum()
     }
-    pd.DataFrame([summary]).to_csv(OUTPUT_DIR / "analytics_summary.csv", index=False)
-    print("Saved analytics_summary.csv")
+    pd.DataFrame([summary]).to_csv(OUTPUT_DIR / "analytics_summary_v1.csv", index=False)
+    print("Saved analytics_summary_v1.csv")
     
     # BONUS: Pris analys
     create_price_analysis(df_valid, OUTPUT_DIR)
