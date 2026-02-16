@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine  # Lightweight version av postgres
+    container_name: lab_postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password  # Enkelt lösenord ENBART för labb syfte
+      POSTGRES_DB: lab_db          # Skapar databasen automatiskt
+    ports:
+      # VÄNSTER sida = Min dator (Host)
+      # HÖGER sida = Inuti containern
+      - "5434:5432" 
+    volumes:
+      # Datan sparas även om jag tar bort containern
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
