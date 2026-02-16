@@ -77,9 +77,16 @@ def run_pipeline():
     df['flag_is_free'] = df['price_numeric'] == 0
     df['flag_luxury'] = df['price_numeric'] > THRESHOLD_LUXURY
     df['flag_missing_currency'] = df['currency'].isna() | (df['currency'] == '')  # Added!
+    df['flag_missing_id'] = df['id'].isna() | (df['id'] == '') # Added!
     
     # REJECT'A omöjliga värden
-    rejection_mask = df['flag_missing_price'] | df['flag_negative_price']
+    # Nu åker man ut om man saknar pris, har negativt pris, ELLER saknar ID
+    rejection_mask = (
+        df['flag_missing_price'] | 
+        df['flag_negative_price'] | 
+        df['flag_missing_id']
+    )
+
     df_rejected = df[rejection_mask].copy()
     df_valid = df[~rejection_mask].copy()
     
