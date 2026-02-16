@@ -1,12 +1,12 @@
 id,name,price,currency,created_at,created_at_str,price_clean,price_numeric,flag_missing_price,flag_negative_price,flag_is_free,flag_luxury,flag_missing_currency,flag_missing_id
 SKU-1001,Shoes,799,SEK,2024-01-10,2024-01-10,799,799.0,False,False,False,False,False,False
-SKU-1002,Pants,520,SEK,,,520,520.0,False,False,False,False,False,False
+SKU-1002,Pants,520,SEK,2024-02-15,2024-02-15,520,520.0,False,False,False,False,False,False
 SKU-1003,Shirts,450,SEK,,,450,450.0,False,False,False,False,False,False
 SKU-1008,Gloves,120,,2024-06-20,2024-06-20,120,120.0,False,False,False,False,True,False
 SKU-1009,Socks,99,SEK,2024-02-01,2024-02-01,99,99.0,False,False,False,False,False,False
 SKU-1010,Boots,1500,SEK,2024-02-15,2024-02-15,1500,1500.0,False,False,False,False,False,False
 SKU-1011,Scarf,200,SEK,2024-03-01,2024-03-01,200,200.0,False,False,False,False,False,False
-SKU-1012,Belt,300,SEK,,,300,300.0,False,False,False,False,False,False
+SKU-1012,Belt,300,SEK,2024-03-10,2024-03-10,300,300.0,False,False,False,False,False,False
 SKU-1013,Cap,75,SEK,2024-04-01,2024-04-01,75,75.0,False,False,False,False,False,False
 SKU-1014,T-Shirt,0,SEK,2024-04-10,2024-04-10,0,0.0,False,False,True,False,False,False
 SKU-1016,Coat,2500,SEK,2024-05-01,2024-05-01,2500,2500.0,False,False,False,False,False,False

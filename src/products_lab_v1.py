@@ -57,6 +57,8 @@ def run_pipeline():
         df['name'] = df['name'].str.title()
     if 'currency' in df.columns:
         df['currency'] = df['currency'].str.upper()
+    if 'created_at' in df.columns:
+        df['created_at'] = df['created_at'].str.strip().str.replace("/", "-", regex=False)
     
     # Fixar till format på datum
     df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
