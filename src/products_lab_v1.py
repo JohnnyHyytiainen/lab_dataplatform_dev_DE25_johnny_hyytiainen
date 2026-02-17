@@ -117,7 +117,7 @@ def run_pipeline():
     print(f"\n -  Summary:")
     print(f"   - Avg price: {summary['avg_price']:.2f}")
     print(f"   - Median price: {summary['median_price']:.2f}")
-    print(f"   - Luxury items (>{THRESHOLD_LUXURY}): {df_valid['flag_luxury'].sum()}")
+    print(f"   - Luxury items: (>{THRESHOLD_LUXURY}): {df_valid['flag_luxury'].sum()}")
     print(f"   - Free items: {df_valid['flag_is_free'].sum()}")
     print(f"   - Missing currency: {summary['missing_currency_count']}")
     print(f"   - Missing prices: {summary['missing_price_count']}")
