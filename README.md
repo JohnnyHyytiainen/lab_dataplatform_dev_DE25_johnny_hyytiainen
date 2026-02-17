@@ -84,8 +84,7 @@ The project simulates a real-world scenario where data integrity is compromised 
 │   ├── DE_25_Lab1.pdf           # Lab Requirements
 │   ├── theory_answers.md        # Answers to theoretical questions (KUN9, KUN10)
 │   ├── notes.md                 # Academic references
-│   ├── docker_pgadmin_setup.md  # Quick setup with run commands for docker and Pgadmin4
-│   │ 
+│   ├── docker_runbook.md        # Quick setup with run commands for docker and Pgadmin4
 │   └── visuals/                 # Screenshots with dirty prices, clean prices and end result output
 │      
 │
